@@ -17,7 +17,7 @@ def ask(question):
     churn = pd.read_sql("SELECT COUNT(*) as total, ROUND(AVG(churn_probability)::numeric * 100, 2) as avg_churn FROM churn_predictions", engine)
     ltv = pd.read_sql("SELECT ROUND(AVG(predicted_ltv)::numeric, 2) as avg_ltv FROM ltv_predictions", engine)
     db_summary = f"SEGMENTS:\n{segments.to_string(index=False)}\n\nCHURN:\n{churn.to_string(index=False)}\n\nLTV:\n{ltv.to_string(index=False)}"
-    client = Groq(api_key="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")
+    client = Groq(api_key=st.secrets["GROQ_API_KEY"])
     system_prompt = f"You are a senior data analyst for an e-commerce business with 93357 customers. Answer with specific numbers.\n\nDATA:\n{db_summary}"
     response = client.chat.completions.create(model="llama-3.3-70b-versatile", messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": question}], temperature=0.3)
     return response.choices[0].message.content
